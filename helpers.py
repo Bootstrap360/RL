@@ -70,11 +70,14 @@ class GameRunner:
         print("Step {}, Total reward: {}, Eps: {}, took {} loops".format(self._steps, tot_reward, self._eps, count))
 
     def _choose_action(self, state):
+        random_action =  self._env.get_correct_action()
+        return random_action
         if random.random() < self._eps:
-            random_action =  self._env.get_correct_action()
-            return random_action
+            pass
         else:
-            chosen_action = np.argmax(self._model.predict_one(state, self._sess))
+            correct_action = self._env.get_correct_action()
+            prediction = self._model.predict_one(state, self._sess)
+            chosen_action = np.argmax(prediction)
             print("chosen_action", chosen_action)
             return chosen_action
 

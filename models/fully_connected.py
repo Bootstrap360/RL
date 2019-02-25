@@ -29,7 +29,6 @@ class Model:
         # tmp2 = tf.Print(self._logits, [self._logits])
         # loss = tf.losses.mean_squared_error(tmp, tmp2)
         loss = tf.losses.mean_squared_error(self._q_s_a, self._logits)
-        loss = tf.Print(loss, [loss])
         self._optimizer = tf.train.AdamOptimizer().minimize(loss)
         self._var_init = tf.global_variables_initializer()
     

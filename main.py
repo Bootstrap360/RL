@@ -47,7 +47,7 @@ def main(args):
                 save_path = saver.save(sess, os.path.join(model_save_dir,"model_{:05d}.ckpt".format(cnt)))
                 print("Model saved in path: %s" % save_path)
             else:
-                gr._render = False
+                gr._render = True
                 gr.run()
             cnt += 1
         # plt.plot(gr.reward_store)
@@ -58,7 +58,7 @@ def main(args):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--batch_size', default = 100, type=int)
+    parser.add_argument('--batch_size', default = 3, type=int)
     parser.add_argument('--max_epsilon', default = 1, type=float)
     parser.add_argument('--min_epsilon', default = 0.01, type=float)
     parser.add_argument('--decay', default =  0.001, type = float)

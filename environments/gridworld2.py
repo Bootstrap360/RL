@@ -260,7 +260,7 @@ class GameEnv():
         correct_action = GameEnv._get_correct_action(target, hero)
         reward = 0
         if action == correct_action:
-            reward = 0.5
+            reward = 1
         else:
             reward = 0
         # distance = GameEnv.get_distace(target, hero)
@@ -298,7 +298,7 @@ class GameEnv():
     def render(self):
         rendered_env = self.render_env()
         cv2.imshow('game', rendered_env)
-        cv2.waitKey(10)
+        cv2.waitKey(100)
 
 
     def step(self,action):

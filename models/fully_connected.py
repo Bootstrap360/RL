@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 class Model:
-    def __init__(self, num_states, num_actions, batch_size):
+    def __init__(self, num_states, num_actions, batch_size, layer_sizes = [50,50]):
         self._num_states = num_states
         self._num_actions = num_actions
         self._batch_size = batch_size
@@ -12,6 +12,8 @@ class Model:
         self._logits = None
         self._optimizer = None
         self._var_init = None
+        self._layer_sizes = layer_sizes
+        assert len(layer_sizes) > 0
         # now setup the model
         self._define_model()
 
@@ -19,19 +21,24 @@ class Model:
         self._states = tf.placeholder(shape=[None, self._num_states], dtype=tf.float32)
         self._q_s_a = tf.placeholder(shape=[None, self._num_actions], dtype=tf.float32)
         # create a couple of fully connected hidden layers
-        fc1 = tf.layers.dense(self._states, 50, activation=tf.nn.relu)
-        fc2 = tf.layers.dense(fc1, 50, activation=tf.nn.relu)
+        fc = tf.layers.dense(self._states, self._layer_sizes[0], activation=tf.nn.relu)
+        fc1 = tf.layers.dense(self._states, 3, activation=tf.nn.relu)
+        fc2 = tf.layers.dense(fc1, 3, activation=tf.nn.relu)
         self._logits = tf.layers.dense(fc2, self._num_actions)
+        # tmp = tf.Print(self._q_s_a, [self._q_s_a])
+        # tmp2 = tf.Print(self._logits, [self._logits])
+        # loss = tf.losses.mean_squared_error(tmp, tmp2)
         loss = tf.losses.mean_squared_error(self._q_s_a, self._logits)
+        loss = tf.Print(loss, [loss])
         self._optimizer = tf.train.AdamOptimizer().minimize(loss)
         self._var_init = tf.global_variables_initializer()
     
     def predict_one(self, state, sess):
         return sess.run(self._logits, feed_dict={self._states:
-                                                 state.reshape(1, self.num_states)})
+                                                 state.reshape(1, self._num_states)})
 
     def predict_batch(self, states, sess):
-        return sess.run(self._logits, feed_dict={self._states: states.reshape(-1, self.num_states)})
+        return sess.run(self._logits, feed_dict={self._states: states.reshape(-1, self._num_states)})
 
     def train_batch(self, sess, x_batch, y_batch):
         sess.run(self._optimizer, feed_dict={self._states: x_batch, self._q_s_a: y_batch})

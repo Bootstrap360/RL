@@ -62,18 +62,21 @@ class GameRunner:
             tot_reward += reward
 
             # if the game is done, break the loop
-            if done:
+            count += 1
+            if done or count > 200:
                 self._reward_store.append(tot_reward)
                 break
-            count += 1
             
         print("Step {}, Total reward: {}, Eps: {}, took {} loops".format(self._steps, tot_reward, self._eps, count))
 
     def _choose_action(self, state):
         if random.random() < self._eps:
-            return random.randint(0, self._model.num_actions - 1)
+            random_action =  self._env.get_correct_action()
+            return random_action
         else:
-            return np.argmax(self._model.predict_one(state, self._sess))
+            chosen_action = np.argmax(self._model.predict_one(state, self._sess))
+            print("chosen_action", chosen_action)
+            return chosen_action
 
     def _replay(self):
         batch = self._memory.sample(self._model.batch_size)
